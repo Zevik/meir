@@ -15,7 +15,7 @@
             min-height: 100vh;
             overflow-y: auto;
             scroll-behavior: smooth;
-             position: relative;
+            position: relative;
         }
         body::before {
             content: "";
@@ -190,17 +190,17 @@
     </audio>
 
     <script>
-        const text = [
+         const text = [
             'שחרור פנימי',
             'סדרת מפגשים',
             'לשחרור המקומות העמוקים',
             'בנפש',
-            '<span class="emphasize">עם מאיר אבינר</span>',
+            'עם מאיר אבינר',
             'הסדנא אורכת ארבעה שבועות',
             'בכל שבוע ניפגש ל-3 שעות של חיבור והבעה',
             'במפגשים נעבוד בגישה ייחודית',
             'שפיתחתי בשנים האחרונות',
-            '<span class="emphasize">נשחרר את העצב והשמחה דרך:</span>',
+            'נשחרר את העצב והשמחה דרך:',
             '~מוזיקה ושירת ריפוי',
             '~קול נשימה ותנועה',
             '~מדיטציה ודמיון מודרך',
@@ -255,6 +255,10 @@
             else lineDiv.classList.add('details');
 
             lineDiv.id = `line-${currentLineIndex}`;
+            
+             if (currentLineIndex === 4 || currentLineIndex === 9) {
+                lineDiv.innerHTML = `<span class="emphasize"></span>`;
+            }
             content.appendChild(lineDiv);
             return lineDiv;
         }
@@ -283,8 +287,7 @@
             const currentText = text[currentLineIndex];
 
             if (currentLineIndex === text.indexOf('052-6518168')) {
-                const lineDiv = createNewLine();
-
+                const lineDiv = document.getElementById(`line-${currentLineIndex}`) || createNewLine();
                 const phoneLink = document.createElement('a');
                 phoneLink.href = 'tel:052-6518168';
                 phoneLink.style.color = 'inherit';
@@ -298,18 +301,17 @@
 
                 return;
             } else {
-                const currentLine = document.getElementById(`line-${currentLineIndex}`) || createNewLine();
-
-                if (currentCharIndex < currentText.length) {
-                    if (currentText[currentCharIndex] === '<' && currentText.substring(currentCharIndex, currentCharIndex + 7) === '<span c') {
-                        let spanEndIndex = currentText.indexOf('>', currentCharIndex);
-                        currentLine.innerHTML += currentText.substring(currentCharIndex, spanEndIndex + 1);
-                        currentCharIndex = spanEndIndex + 1;
-                    } else {
+                 const currentLine = document.getElementById(`line-${currentLineIndex}`) || createNewLine();
+                    
+               if (currentCharIndex < currentText.length) {
+                   if (currentLineIndex === 4 || currentLineIndex === 9) {
+                         currentLine.querySelector('span').textContent += currentText[currentCharIndex]
+                       }
+                   else{
                         currentLine.textContent += currentText[currentCharIndex];
-                        currentCharIndex++;
-                    }
-
+                   }
+                    currentCharIndex++;
+                      
                     // גלילה רק בתחילת שורה חדשה ולא בשורה האחרונה
                     if (currentCharIndex === 1 && currentLineIndex < text.length - 1) {
                         currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
