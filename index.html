@@ -15,6 +15,21 @@
             min-height: 100vh;
             overflow-y: auto;
             scroll-behavior: smooth;
+             position: relative;
+        }
+        body::before {
+            content: "";
+            background-image: url('meir.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            opacity: 0.1;
         }
 
         @keyframes backgroundAnimation {
@@ -138,11 +153,11 @@
         .control-button:hover {
             background: rgba(255, 255, 255, 0.5);
         }
-        
+
         a {
             transition: color 0.3s ease;
         }
-        
+
         a:hover {
             color: #4a90e2 !important;
             cursor: pointer;
@@ -170,9 +185,9 @@
         <span id="volume-label">50%</span>
     </div>
 
- <audio id="background-music" loop>
-    <source src="music.mp3" type="audio/mpeg">
-</audio>
+    <audio id="background-music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
 
     <script>
         const text = [
@@ -180,7 +195,7 @@
             'סדרת מפגשים',
             'לשחרור המקומות העמוקים',
             'בנפש',
-             '<span class="emphasize">עם מאיר אבינר</span>',
+            '<span class="emphasize">עם מאיר אבינר</span>',
             'הסדנא אורכת ארבעה שבועות',
             'בכל שבוע ניפגש ל-3 שעות של חיבור והבעה',
             'במפגשים נעבוד בגישה ייחודית',
@@ -234,11 +249,11 @@
         function createNewLine() {
             const lineDiv = document.createElement('div');
             lineDiv.className = 'line';
-            
+
             if (currentLineIndex === 0) lineDiv.classList.add('title');
             else if (currentLineIndex <= 3) lineDiv.classList.add('subtitle');
             else lineDiv.classList.add('details');
-            
+
             lineDiv.id = `line-${currentLineIndex}`;
             content.appendChild(lineDiv);
             return lineDiv;
@@ -249,7 +264,7 @@
             flowerContainer.classList.add('visible');
         }
 
-       function typeText() {
+        function typeText() {
             if (currentLineIndex >= text.length) {
                 const lastLine = document.querySelector('.line:last-child');
                 if (lastLine) {
@@ -267,9 +282,9 @@
 
             const currentText = text[currentLineIndex];
 
-            if (currentLineIndex === text.indexOf('052-6518168') ) {
+            if (currentLineIndex === text.indexOf('052-6518168')) {
                 const lineDiv = createNewLine();
-               
+
                 const phoneLink = document.createElement('a');
                 phoneLink.href = 'tel:052-6518168';
                 phoneLink.style.color = 'inherit';
@@ -279,40 +294,35 @@
                 lineDiv.style.borderRight = 'none';
                 currentLineIndex++;
                 currentCharIndex = 0;
-               setTimeout(typeText, typingSpeed * 2);
-               
-               return;
-            } else{
-                 const currentLine = document.getElementById(`line-${currentLineIndex}`) || createNewLine();
-
-              if (currentCharIndex < currentText.length) {
-                    if (currentText[currentCharIndex] === '<' && currentText.substring(currentCharIndex, currentCharIndex + 7) === '<span c') {
-                     let spanEndIndex = currentText.indexOf('>',currentCharIndex);
-                         currentLine.innerHTML += currentText.substring(currentCharIndex,spanEndIndex +1);
-                         currentCharIndex = spanEndIndex+1;
-                      }else{
-                         currentLine.textContent += currentText[currentCharIndex];
-                          currentCharIndex++;
-                      }
-
-
-                 // גלילה רק בתחילת שורה חדשה ולא בשורה האחרונה
-                 if (currentCharIndex === 1 && currentLineIndex < text.length - 1) {
-                    currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-                setTimeout(typeText, typingSpeed);
-                }
-              else {
-                currentLine.style.borderRight = 'none';
-                currentLineIndex++;
-                currentCharIndex = 0;
                 setTimeout(typeText, typingSpeed * 2);
-            }
+
+                return;
+            } else {
+                const currentLine = document.getElementById(`line-${currentLineIndex}`) || createNewLine();
+
+                if (currentCharIndex < currentText.length) {
+                    if (currentText[currentCharIndex] === '<' && currentText.substring(currentCharIndex, currentCharIndex + 7) === '<span c') {
+                        let spanEndIndex = currentText.indexOf('>', currentCharIndex);
+                        currentLine.innerHTML += currentText.substring(currentCharIndex, spanEndIndex + 1);
+                        currentCharIndex = spanEndIndex + 1;
+                    } else {
+                        currentLine.textContent += currentText[currentCharIndex];
+                        currentCharIndex++;
+                    }
+
+                    // גלילה רק בתחילת שורה חדשה ולא בשורה האחרונה
+                    if (currentCharIndex === 1 && currentLineIndex < text.length - 1) {
+                        currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    setTimeout(typeText, typingSpeed);
+                } else {
+                    currentLine.style.borderRight = 'none';
+                    currentLineIndex++;
+                    currentCharIndex = 0;
+                    setTimeout(typeText, typingSpeed * 2);
+                }
             }
         }
-
-
-
         // התחל את האנימציה
         typeText();
     </script>
