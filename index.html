@@ -19,7 +19,7 @@
         }
         body::before {
             content: "";
-            background-image: url('meir.png');
+            background-image: url('https://i.postimg.cc/13S3nHQK/meir.png');
             background-repeat: no-repeat;
             background-size: cover;
             background-position: center;
@@ -255,8 +255,8 @@
             else lineDiv.classList.add('details');
 
             lineDiv.id = `line-${currentLineIndex}`;
-            
-             if (currentLineIndex === 4 || currentLineIndex === 9) {
+
+            if (currentLineIndex === 4 || currentLineIndex === 9) {
                 lineDiv.innerHTML = `<span class="emphasize"></span>`;
             }
             content.appendChild(lineDiv);
@@ -301,17 +301,17 @@
 
                 return;
             } else {
-                 const currentLine = document.getElementById(`line-${currentLineIndex}`) || createNewLine();
+                const currentLine = document.getElementById(`line-${currentLineIndex}`) || createNewLine();
                     
-               if (currentCharIndex < currentText.length) {
-                   if (currentLineIndex === 4 || currentLineIndex === 9) {
-                         currentLine.querySelector('span').textContent += currentText[currentCharIndex]
-                       }
-                   else{
+                if (currentCharIndex < currentText.length) {
+                    if (currentLineIndex === 4 || currentLineIndex === 9) {
+                        currentLine.querySelector('span').textContent += currentText[currentCharIndex]
+                    }
+                    else{
                         currentLine.textContent += currentText[currentCharIndex];
-                   }
+                    }
                     currentCharIndex++;
-                      
+                        
                     // גלילה רק בתחילת שורה חדשה ולא בשורה האחרונה
                     if (currentCharIndex === 1 && currentLineIndex < text.length - 1) {
                         currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
