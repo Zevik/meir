@@ -43,6 +43,11 @@
             animation: blink-caret .75s step-end infinite;
         }
 
+        .emphasize {
+            font-weight: bold;
+            font-size: 24px;
+        }
+
         @keyframes blink-caret {
             from, to { border-color: transparent }
             50% { border-color: #333; }
@@ -54,6 +59,16 @@
 
         #content {
             padding-bottom: 20px;
+        }
+
+        .phone-link {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .phone-link:hover {
+            color: #4a90e2 !important;
+            text-decoration: underline !important;
         }
 
         #flower-container {
@@ -166,12 +181,12 @@
             'סדרת מפגשים',
             'לשחרור המקומות העמוקים',
             'בנפש',
-            'עם מאיר אבינר',
+             '<span class="emphasize">עם מאיר אבינר</span>',
             'הסדנא אורכת ארבעה שבועות',
             'בכל שבוע ניפגש ל-3 שעות של חיבור והבעה',
             'במפגשים נעבוד בגישה ייחודית',
             'שפיתחתי בשנים האחרונות',
-            'נשחרר את העצב והשמחה דרך:',
+            '<span class="emphasize">נשחרר את העצב והשמחה דרך:</span>',
             '~מוזיקה ושירת ריפוי',
             '~קול נשימה ותנועה',
             '~מדיטציה ודמיון מודרך',
@@ -235,7 +250,7 @@
             flowerContainer.classList.add('visible');
         }
 
-        function typeText() {
+       function typeText() {
             if (currentLineIndex >= text.length) {
                 const lastLine = document.querySelector('.line:last-child');
                 if (lastLine) {
@@ -251,38 +266,53 @@
                 isPlaying = false;
             }
 
-            const currentLine = document.getElementById(`line-${currentLineIndex}`) || createNewLine();
             const currentText = text[currentLineIndex];
 
-            if (currentCharIndex < currentText.length) {
-                if (text[currentLineIndex] === '052-6518168') {
-                    if (currentCharIndex === 0) {
-                        // יצירת אלמנט הקישור לטלפון
-                        const phoneLink = document.createElement('a');
-                        phoneLink.href = 'tel:052-6518168';
-                        phoneLink.style.color = 'inherit';
-                        phoneLink.style.textDecoration = 'none';
-                        currentLine.appendChild(phoneLink);
-                        // שינוי ההתייחסות לאלמנט הנוכחי
-                        currentLine = phoneLink;
-                    }
-                }
-                currentLine.textContent += currentText[currentCharIndex];
-                currentCharIndex++;
-                
-                // גלילה רק בתחילת שורה חדשה ולא בשורה האחרונה
-                if (currentCharIndex === 1 && currentLineIndex < text.length - 1) {
+            if (currentLineIndex === text.indexOf('052-6518168') ) {
+                const lineDiv = createNewLine();
+               
+                const phoneLink = document.createElement('a');
+                phoneLink.href = 'tel:052-6518168';
+                phoneLink.style.color = 'inherit';
+                phoneLink.style.textDecoration = 'none';
+                phoneLink.textContent = currentText;
+                lineDiv.appendChild(phoneLink);
+                lineDiv.style.borderRight = 'none';
+                currentLineIndex++;
+                currentCharIndex = 0;
+               setTimeout(typeText, typingSpeed * 2);
+               
+               return;
+            } else{
+                 const currentLine = document.getElementById(`line-${currentLineIndex}`) || createNewLine();
+
+              if (currentCharIndex < currentText.length) {
+                    if (currentText[currentCharIndex] === '<' && currentText.substring(currentCharIndex, currentCharIndex + 7) === '<span c') {
+                     let spanEndIndex = currentText.indexOf('>',currentCharIndex);
+                         currentLine.innerHTML += currentText.substring(currentCharIndex,spanEndIndex +1);
+                         currentCharIndex = spanEndIndex+1;
+                      }else{
+                         currentLine.textContent += currentText[currentCharIndex];
+                          currentCharIndex++;
+                      }
+
+
+                 // גלילה רק בתחילת שורה חדשה ולא בשורה האחרונה
+                 if (currentCharIndex === 1 && currentLineIndex < text.length - 1) {
                     currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
-                
                 setTimeout(typeText, typingSpeed);
-            } else {
+                }
+              else {
                 currentLine.style.borderRight = 'none';
                 currentLineIndex++;
                 currentCharIndex = 0;
                 setTimeout(typeText, typingSpeed * 2);
             }
+            }
         }
+
+
 
         // התחל את האנימציה
         typeText();
