@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שחרור פנימי</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            background: linear-gradient(135deg, #f0f2f0, #c7ecee, #dff9fb, #f0f2f0);
+            background-size: 400% 400%;
+            animation: backgroundAnimation 15s infinite alternate;
+            min-height: 100vh;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        #text-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .line {
+            display: block;
+            margin-bottom: 15px;
+            min-height: 30px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            border-right: .15em solid #333;
+            overflow: hidden;
+            animation: blink-caret .75s step-end infinite;
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #333; }
+        }
+
+        .title { font-size: 38px; font-weight: bold; margin-bottom: 20px; }
+        .subtitle { font-size: 24px; color: #333; }
+        .details { font-size: 20px; color: #444; }
+
+        #content {
+            padding-bottom: 20vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="text-container">
+        <div id="content"></div>
+    </div>
+
+    <script>
+        const text = [
+            'שחרור פנימי',
+            'סדרת מפגשים',
+            'לשחרור המקומות העמוקים',
+            'בנפש',
+            'עם מאיר אבינר',
+            'הסדנא אורכת ארבעה שבועות',
+            'בכל שבוע ניפגש ל-3 שעות של חיבור והבעה',
+            'במפגשים נעבוד בגישה ייחודית',
+            'שפיתחתי בשנים האחרונות',
+            'נשחרר את העצב והשמחה דרך:',
+            '~מוזיקה ושירת ריפוי',
+            '~קול נשימה ותנועה',
+            '~מדיטציה ודמיון מודרך',
+            '~תקשורת בלתי אמצעית, ג\'בריש ואילתור',
+            '~עלות 650 שח',
+            'לפרטים נוספים והרשמה\n052-6518186',
+            'מחכה לראות אותך, מאיר'
+        ];
+
+        const content = document.getElementById('content');
+        let currentLineIndex = 0;
+        let currentCharIndex = 0;
+        const typingSpeed = 50; // מהירות ההקלדה במילישניות
+
+        function createNewLine() {
+            const lineDiv = document.createElement('div');
+            lineDiv.className = 'line';
+            
+            if (currentLineIndex === 0) lineDiv.classList.add('title');
+            else if (currentLineIndex <= 3) lineDiv.classList.add('subtitle');
+            else lineDiv.classList.add('details');
+            
+            lineDiv.id = `line-${currentLineIndex}`;
+            content.appendChild(lineDiv);
+            return lineDiv;
+        }
+
+        function typeText() {
+            if (currentLineIndex >= text.length) {
+                // הסר את הסמן מהשורה האחרונה כשמסיימים
+                const lastLine = document.querySelector('.line:last-child');
+                if (lastLine) {
+                    lastLine.style.borderRight = 'none';
+                }
+                return;
+            }
+
+            const currentLine = document.getElementById(`line-${currentLineIndex}`) || createNewLine();
+            const currentText = text[currentLineIndex];
+
+            if (currentCharIndex < currentText.length) {
+                currentLine.textContent += currentText[currentCharIndex];
+                currentCharIndex++;
+                
+                // גלילה אוטומטית
+                if (currentCharIndex === 1) { // בתחילת כל שורה חדשה
+                    currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                setTimeout(typeText, typingSpeed);
+            } else {
+                // מעבר לשורה הבאה
+                currentLine.style.borderRight = 'none';
+                currentLineIndex++;
+                currentCharIndex = 0;
+                setTimeout(typeText, typingSpeed * 2);
+            }
+        }
+
+        typeText();
+    </script>
+</body>
+</html>
