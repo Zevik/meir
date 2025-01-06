@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>שחרור פנימי</title>
     <style>
+        /* ... הסגנונות הקודמים ... */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -53,13 +54,62 @@
         .details { font-size: 20px; color: #444; }
 
         #content {
-            padding-bottom: 20vh;
+            padding-bottom: 20px;
+        }
+
+        #flower-container {
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            margin-top: 30px;
+        }
+
+        #flower-container.visible {
+            opacity: 1;
+        }
+
+        @keyframes flowerGrow {
+            from {
+                transform: scale(0) rotate(0deg);
+            }
+            to {
+                transform: scale(1) rotate(360deg);
+            }
+        }
+
+        .flower {
+            animation: flowerGrow 2s ease-out forwards;
+        }
+
+        .petal {
+            fill: #ff7eb9;
+            transition: fill 0.3s;
+        }
+
+        .center {
+            fill: #ffd700;
+        }
+
+        #flower-svg:hover .petal {
+            fill: #ff5c8a;
         }
     </style>
 </head>
 <body>
     <div id="text-container">
         <div id="content"></div>
+        <div id="flower-container">
+            <svg id="flower-svg" width="200" height="200" viewBox="0 0 200 200" class="flower">
+                <!-- מרכז הפרח -->
+                <circle class="center" cx="100" cy="100" r="20"/>
+                
+                <!-- עלי הכותרת -->
+                <path class="petal" d="M100,100 C80,60 80,20 100,0 C120,20 120,60 100,100"/>
+                <path class="petal" d="M100,100 C140,80 180,80 200,100 C180,120 140,120 100,100" transform="rotate(72 100 100)"/>
+                <path class="petal" d="M100,100 C140,80 180,80 200,100 C180,120 140,120 100,100" transform="rotate(144 100 100)"/>
+                <path class="petal" d="M100,100 C140,80 180,80 200,100 C180,120 140,120 100,100" transform="rotate(216 100 100)"/>
+                <path class="petal" d="M100,100 C140,80 180,80 200,100 C180,120 140,120 100,100" transform="rotate(288 100 100)"/>
+            </svg>
+        </div>
     </div>
 
     <script>
@@ -86,7 +136,7 @@
         const content = document.getElementById('content');
         let currentLineIndex = 0;
         let currentCharIndex = 0;
-        const typingSpeed = 50; // מהירות ההקלדה במילישניות
+        const typingSpeed = 50;
 
         function createNewLine() {
             const lineDiv = document.createElement('div');
@@ -101,13 +151,19 @@
             return lineDiv;
         }
 
+        function showFlower() {
+            const flowerContainer = document.getElementById('flower-container');
+            flowerContainer.classList.add('visible');
+        }
+
         function typeText() {
             if (currentLineIndex >= text.length) {
-                // הסר את הסמן מהשורה האחרונה כשמסיימים
                 const lastLine = document.querySelector('.line:last-child');
                 if (lastLine) {
                     lastLine.style.borderRight = 'none';
                 }
+                // הצג את הפרח כשהטקסט מסתיים
+                setTimeout(showFlower, 500);
                 return;
             }
 
@@ -118,14 +174,13 @@
                 currentLine.textContent += currentText[currentCharIndex];
                 currentCharIndex++;
                 
-                // גלילה אוטומטית
-                if (currentCharIndex === 1) { // בתחילת כל שורה חדשה
+                // גלילה רק בתחילת שורה חדשה ולא בשורה האחרונה
+                if (currentCharIndex === 1 && currentLineIndex < text.length - 1) {
                     currentLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
                 
                 setTimeout(typeText, typingSpeed);
             } else {
-                // מעבר לשורה הבאה
                 currentLine.style.borderRight = 'none';
                 currentLineIndex++;
                 currentCharIndex = 0;
