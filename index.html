@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>שחרור פנימי</title>
     <style>
-        /* ... הסגנונות הקודמים ... */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -92,6 +91,38 @@
         #flower-svg:hover .petal {
             fill: #ff5c8a;
         }
+
+        #audio-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #volume-control {
+            width: 100px;
+            margin: 0 10px;
+        }
+
+        .control-button {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .control-button:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -99,10 +130,7 @@
         <div id="content"></div>
         <div id="flower-container">
             <svg id="flower-svg" width="200" height="200" viewBox="0 0 200 200" class="flower">
-                <!-- מרכז הפרח -->
                 <circle class="center" cx="100" cy="100" r="20"/>
-                
-                <!-- עלי הכותרת -->
                 <path class="petal" d="M100,100 C80,60 80,20 100,0 C120,20 120,60 100,100"/>
                 <path class="petal" d="M100,100 C140,80 180,80 200,100 C180,120 140,120 100,100" transform="rotate(72 100 100)"/>
                 <path class="petal" d="M100,100 C140,80 180,80 200,100 C180,120 140,120 100,100" transform="rotate(144 100 100)"/>
@@ -111,6 +139,17 @@
             </svg>
         </div>
     </div>
+
+    <div id="audio-controls">
+        <button id="play-pause" class="control-button">▶️</button>
+        <input type="range" id="volume-control" min="0" max="1" step="0.1" value="0.5">
+        <span id="volume-label">50%</span>
+    </div>
+
+    <audio id="background-music" loop>
+        <source src="/music.mp3" type="audio/mpeg">
+        הדפדפן שלך לא תומך בהשמעת אודיו.
+    </audio>
 
     <script>
         const text = [
@@ -128,15 +167,45 @@
             '~קול נשימה ותנועה',
             '~מדיטציה ודמיון מודרך',
             '~תקשורת בלתי אמצעית, ג\'בריש ואילתור',
-            'עלות 650 שח',
+            '~עלות 650 שח',
             'לפרטים נוספים והרשמה\n052-6518186',
             'מחכה לראות אותך, מאיר'
         ];
 
         const content = document.getElementById('content');
+        const audio = document.getElementById('background-music');
+        const playPauseButton = document.getElementById('play-pause');
+        const volumeControl = document.getElementById('volume-control');
+        const volumeLabel = document.getElementById('volume-label');
         let currentLineIndex = 0;
         let currentCharIndex = 0;
+        let isPlaying = false;
         const typingSpeed = 50;
+
+        // התחלת המוזיקה עם האינטראקציה הראשונה
+        function initAudio() {
+            audio.volume = volumeControl.value;
+            document.removeEventListener('click', initAudio);
+        }
+        document.addEventListener('click', initAudio);
+
+        // בקרת שמע
+        playPauseButton.addEventListener('click', () => {
+            if (isPlaying) {
+                audio.pause();
+                playPauseButton.textContent = '▶️';
+            } else {
+                audio.play();
+                playPauseButton.textContent = '⏸️';
+            }
+            isPlaying = !isPlaying;
+        });
+
+        volumeControl.addEventListener('input', (e) => {
+            const volume = e.target.value;
+            audio.volume = volume;
+            volumeLabel.textContent = `${Math.round(volume * 100)}%`;
+        });
 
         function createNewLine() {
             const lineDiv = document.createElement('div');
@@ -162,9 +231,17 @@
                 if (lastLine) {
                     lastLine.style.borderRight = 'none';
                 }
-                // הצג את הפרח כשהטקסט מסתיים
                 setTimeout(showFlower, 500);
                 return;
+            }
+
+            // התחל מוזיקה בתחילת ההקלדה
+            if (currentLineIndex === 0 && currentCharIndex === 0) {
+                audio.play().catch(() => {
+                    console.log('Autoplay blocked by browser');
+                });
+                isPlaying = true;
+                playPauseButton.textContent = '⏸️';
             }
 
             const currentLine = document.getElementById(`line-${currentLineIndex}`) || createNewLine();
@@ -188,6 +265,7 @@
             }
         }
 
+        // התחל את האנימציה
         typeText();
     </script>
 </body>
